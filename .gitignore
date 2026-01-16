@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+dist/
+dist-ssr/
+
+# Tauri
+src-tauri/target/
+
+# FFmpeg binaries (large files)
+src-tauri/resources/windows/ffmpeg.exe
+src-tauri/resources/windows/ffplay.exe
+
+# Temporary files
+ffmpeg-temp/
+ffmpeg-temp.zip
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+*.exe
+*.msi
+*.dmg
+*.deb
+*.rpm
+*.AppImage

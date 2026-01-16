@@ -1,0 +1,99 @@
+name: Release Windows Build
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger khi push tag bắt đầu bằng 'v' (vd: v1.0.0, v1.2.3)
+
+permissions:
+  contents: write # Quyền write để tạo release
+
+jobs:
+  release:
+    name: Build and Release Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Download FFmpeg
+        shell: powershell
+        run: |
+          Write-Host "Downloading FFmpeg..." -ForegroundColor Cyan
+          
+          $ffmpegUrl = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
+          $downloadPath = "ffmpeg-temp.zip"
+          $extractPath = "ffmpeg-temp"
+          $targetPath = "src-tauri\resources\windows"
+          
+          # Create directory
+          New-Item -ItemType Directory -Path $targetPath -Force | Out-Null
+          
+          # Download
+          Invoke-WebRequest -Uri $ffmpegUrl -OutFile $downloadPath -UseBasicParsing
+          
+          # Extract
+          Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
+          
+          # Copy binaries
+          $ffmpegExe = Get-ChildItem -Path $extractPath -Recurse -Filter "ffmpeg.exe" | Select-Object -First 1
+          $ffplayExe = Get-ChildItem -Path $extractPath -Recurse -Filter "ffplay.exe" | Select-Object -First 1
+          
+          Copy-Item $ffmpegExe.FullName -Destination "$targetPath\ffmpeg.exe" -Force
+          Copy-Item $ffplayExe.FullName -Destination "$targetPath\ffplay.exe" -Force
+          
+          # Cleanup
+          Remove-Item $downloadPath -Force
+          Remove-Item $extractPath -Recurse -Force
+          
+          Write-Host "FFmpeg downloaded successfully!" -ForegroundColor Green
+
+      - name: Build Tauri app
+        run: npm run tauri build
+
+      - name: Get version from tag
+        id: get_version
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/msi/*.msi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer-${{ steps.get_version.outputs.VERSION }}
+          path: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/msi/*.msi
+          retention-days: 30

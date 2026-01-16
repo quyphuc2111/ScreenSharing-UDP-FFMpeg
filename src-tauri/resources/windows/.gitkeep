@@ -1,0 +1,6 @@
+# Place Windows FFmpeg binaries here:
+# - ffmpeg.exe
+# - ffplay.exe
+
+# Download from: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
+# Or run: .\download_ffmpeg.ps1

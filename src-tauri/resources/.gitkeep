@@ -1,0 +1,8 @@
+# Place FFmpeg binaries here:
+# - ffmpeg.exe (Windows)
+# - ffplay.exe (Windows)
+# - ffmpeg (Linux/macOS)
+# - ffplay (Linux/macOS)
+
+# Download from: https://ffmpeg.org/download.html
+# Windows: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
