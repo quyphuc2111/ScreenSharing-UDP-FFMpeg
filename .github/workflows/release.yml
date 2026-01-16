@@ -73,13 +73,12 @@ jobs:
         run: |
           Write-Host "Copying FFmpeg to bundle location..." -ForegroundColor Cyan
           
-          # Copy to target directory for bundling
           $targetDir = "src-tauri\target\release"
           
           if (Test-Path "$targetDir") {
             Copy-Item "src-tauri\resources\windows\ffmpeg.exe" -Destination "$targetDir\ffmpeg.exe" -Force
             Copy-Item "src-tauri\resources\windows\ffplay.exe" -Destination "$targetDir\ffplay.exe" -Force
-            Write-Host "✓ FFmpeg copied to release directory" -ForegroundColor Green
+            Write-Host "[OK] FFmpeg copied to release directory" -ForegroundColor Green
           }
 
       - name: Build Tauri app
