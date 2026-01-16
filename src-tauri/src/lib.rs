@@ -117,6 +117,8 @@ async fn start_student_view(multicast_addr: String) -> Result<String, String> {
     let ffplay_path = streaming::get_ffplay_path()
         .map_err(|e| e.to_string())?;
 
+    let ffplay_path_display = ffplay_path.display().to_string();
+
     // Spawn FFplay in a new process
     thread::spawn(move || {
         let _ = std::process::Command::new(&ffplay_path)
@@ -133,7 +135,7 @@ async fn start_student_view(multicast_addr: String) -> Result<String, String> {
             .spawn();
     });
 
-    Ok(format!("Student view started (using {})", ffplay_path.display()))
+    Ok(format!("Student view started (using {})", ffplay_path_display))
 }
 
 #[tauri::command]

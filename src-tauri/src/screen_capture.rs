@@ -3,6 +3,7 @@
 use windows::{
     core::*,
     Win32::Graphics::{
+        Direct3D::*,
         Direct3D11::*,
         Dxgi::{Common::*, *},
     },
@@ -39,7 +40,7 @@ impl ScreenCapturer {
                 Some(&mut context),
             )?;
             
-            let device = device.unwrap();
+            let device: ID3D11Device = device.unwrap();
             let context = context.unwrap();
 
             // 2. Get DXGI Output (Monitor)
@@ -65,9 +66,9 @@ impl ScreenCapturer {
                 Format: DXGI_FORMAT_B8G8R8A8_UNORM,
                 SampleDesc: DXGI_SAMPLE_DESC { Count: 1, Quality: 0 },
                 Usage: D3D11_USAGE_STAGING,
-                BindFlags: D3D11_BIND_FLAG(0),
-                CPUAccessFlags: D3D11_CPU_ACCESS_READ,
-                MiscFlags: D3D11_RESOURCE_MISC_FLAG(0),
+                BindFlags: 0,
+                CPUAccessFlags: D3D11_CPU_ACCESS_READ.0,
+                MiscFlags: 0,
             };
 
             let mut staging_texture = None;

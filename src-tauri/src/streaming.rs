@@ -141,7 +141,7 @@ impl StreamingServer {
     pub fn stop(&mut self) -> Result<()> {
         *self.is_running.lock().unwrap() = false;
         
-        if let Some(mut stdin) = self.stdin.take() {
+        if let Some(stdin) = self.stdin.take() {
             drop(stdin);
         }
 
