@@ -53,7 +53,7 @@ impl ScreenCapturer {
             let duplication = output1.DuplicateOutput(&device)?;
 
             // 4. Get screen dimensions
-            let desc = output.GetDesc()?;
+            let desc = unsafe { output.GetDesc() }?;
             let width = (desc.DesktopCoordinates.right - desc.DesktopCoordinates.left) as u32;
             let height = (desc.DesktopCoordinates.bottom - desc.DesktopCoordinates.top) as u32;
 
@@ -67,7 +67,7 @@ impl ScreenCapturer {
                 SampleDesc: DXGI_SAMPLE_DESC { Count: 1, Quality: 0 },
                 Usage: D3D11_USAGE_STAGING,
                 BindFlags: 0,
-                CPUAccessFlags: D3D11_CPU_ACCESS_READ.0,
+                CPUAccessFlags: D3D11_CPU_ACCESS_READ.0 as u32,
                 MiscFlags: 0,
             };
 
