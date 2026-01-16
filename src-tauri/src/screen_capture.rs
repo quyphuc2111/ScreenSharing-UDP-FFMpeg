@@ -53,8 +53,7 @@ impl ScreenCapturer {
             let duplication = output1.DuplicateOutput(&device)?;
 
             // 4. Get screen dimensions from duplication desc
-            let mut dupl_desc = DXGI_OUTDUPL_DESC::default();
-            duplication.GetDesc(&mut dupl_desc);
+            let dupl_desc = duplication.GetDesc();
             let width = dupl_desc.ModeDesc.Width;
             let height = dupl_desc.ModeDesc.Height;
 
