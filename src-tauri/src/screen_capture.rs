@@ -52,10 +52,11 @@ impl ScreenCapturer {
             // 3. Create Desktop Duplication
             let duplication = output1.DuplicateOutput(&device)?;
 
-            // 4. Get screen dimensions
-            let desc = unsafe { output.GetDesc() }?;
-            let width = (desc.DesktopCoordinates.right - desc.DesktopCoordinates.left) as u32;
-            let height = (desc.DesktopCoordinates.bottom - desc.DesktopCoordinates.top) as u32;
+            // 4. Get screen dimensions from duplication desc
+            let mut dupl_desc = DXGI_OUTDUPL_DESC::default();
+            duplication.GetDesc(&mut dupl_desc);
+            let width = dupl_desc.ModeDesc.Width;
+            let height = dupl_desc.ModeDesc.Height;
 
             // 5. Create staging texture
             let staging_desc = D3D11_TEXTURE2D_DESC {
